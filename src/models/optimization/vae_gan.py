@@ -150,5 +150,6 @@ if __name__ == "__main__":
 
     # Save the trained model to disk for later evaluation.
     model_save_path = os.path.abspath(os.path.join("..", "..", "models", "trained_model.pt"))
-    torch.save(trained_model, model_save_path)
+    torch.save(trained_model.state_dict(), model_save_path)
+
     print("Trained model saved to:", model_save_path)
