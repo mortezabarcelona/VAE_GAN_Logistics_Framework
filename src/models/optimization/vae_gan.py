@@ -7,7 +7,6 @@ from torch.utils.data import DataLoader, TensorDataset
 
 
 # ========== VAE Components ==========
-
 class Encoder(nn.Module):
     def __init__(self, input_dim, latent_dim):
         super(Encoder, self).__init__()
@@ -43,7 +42,6 @@ class Decoder(nn.Module):
 
 
 # ========== GAN Discriminator ==========
-
 class Discriminator(nn.Module):
     def __init__(self, input_dim):
         super(Discriminator, self).__init__()
@@ -61,7 +59,6 @@ class Discriminator(nn.Module):
 
 
 # ========== Integrated VAE-GAN Model ==========
-
 class VAEGAN(nn.Module):
     def __init__(self, input_dim, latent_dim):
         super(VAEGAN, self).__init__()
@@ -85,7 +82,6 @@ class VAEGAN(nn.Module):
 
 
 # ========== Hybrid Loss Function ==========
-
 def vaegan_loss(recon_x, x, mu, logvar, disc_out):
     # Reconstruction loss (MSE)
     recon_loss = nn.MSELoss()(recon_x, x)
@@ -97,7 +93,6 @@ def vaegan_loss(recon_x, x, mu, logvar, disc_out):
 
 
 # ========== Training Loop ==========
-
 def train_vaegan(train_loader, input_dim, latent_dim=8, epochs=20, lr=1e-3, device="cpu"):
     model = VAEGAN(input_dim, latent_dim).to(device)
     optimizer = optim.Adam(model.parameters(), lr=lr)
@@ -118,33 +113,42 @@ def train_vaegan(train_loader, input_dim, latent_dim=8, epochs=20, lr=1e-3, devi
 
 
 # ========== Data Loading and Training Example ==========
-
 if __name__ == "__main__":
+    import os
     import pandas as pd
     import numpy as np
     from sklearn.preprocessing import StandardScaler
 
-    # Replace with the correct path to your cleaned synthetic data CSV file
-    data_file = "synthetic_data/data/processed/synthetic_logistics_data_cleaned.csv"
+    # Construct the absolute path to the cleaned synthetic data file.
+    data_file = os.path.abspath(
+        os.path.join("..", "..", "synthetic_data", "data", "processed", "synthetic_logistics_data_cleaned.csv"))
+    print("Loading data from:", data_file)
+
+    # Load the cleaned data.
     df = pd.read_csv(data_file)
 
-    # Select relevant features (adjust according to your data)
+    # Select the relevant features for training.
     features = ['volume', 'cost', 'transit_time', 'co2_emissions', 'cost_per_tonkkm']
-    df_model = df[features].dropna()  # Ensure no missing values
+    df_model = df[features].dropna()  # Ensure there are no missing values.
 
-    # Normalize features using StandardScaler
+    # Normalize features using StandardScaler.
     scaler = StandardScaler()
     data_array = scaler.fit_transform(df_model.values)
 
-    # Convert the array to a PyTorch tensor
+    # Convert the NumPy array to a PyTorch tensor.
     data_tensor = torch.tensor(data_array, dtype=torch.float32)
 
-    # Create a DataLoader from the tensor
+    # Create a DataLoader from the tensor.
     dataset = TensorDataset(data_tensor)
     train_loader = DataLoader(dataset, batch_size=32, shuffle=True)
 
-    # Setup the device
+    # Determine if a GPU is available.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # Train the integrated VAE-GAN model on your synthetic data
+    # Train the integrated VAE-GAN model on your synthetic logistics data.
     trained_model = train_vaegan(train_loader, input_dim=5, latent_dim=8, epochs=20, lr=1e-3, device=device)
+
+    # Save the trained model to disk for later evaluation.
+    model_save_path = os.path.abspath(os.path.join("..", "..", "models", "trained_model.pt"))
+    torch.save(trained_model, model_save_path)
+    print("Trained model saved to:", model_save_path)
