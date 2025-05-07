@@ -5,7 +5,7 @@
 *.log
 *.sqlite3
 
-# Ignore bytecode and cache
+# Ignore bytecode and Python cache
 __pycache__/
 *.py[cod]
 
@@ -18,8 +18,8 @@ env/
 .ipynb_checkpoints/
 
 # Ignore model files
-/trained_model.pt
-/models/checkpoints/
+trained_model.pt
+models/checkpoints/
 
-/src/synthetic_data/data/processed/
-echo "src/synthetic_data/data/processed/*.csv" >> .gitignore
+# Ignore processed CSV files (anywhere inside this folder)
+src/synthetic_data/data/processed/*.csv
