@@ -22,3 +22,4 @@ env/
 /models/checkpoints/
 
 /src/synthetic_data/data/processed/
+echo "src/synthetic_data/data/processed/*.csv" >> .gitignore
