@@ -1,0 +1,24 @@
+# Ignore system files
+.DS_Store
+.idea/
+.vscode/
+*.log
+*.sqlite3
+
+# Ignore bytecode and cache
+__pycache__/
+*.py[cod]
+
+# Ignore virtual environments
+.venv/
+venv/
+env/
+
+# Ignore Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore model files
+/trained_model.pt
+/models/checkpoints/
+
+/src/synthetic_data/data/processed/
